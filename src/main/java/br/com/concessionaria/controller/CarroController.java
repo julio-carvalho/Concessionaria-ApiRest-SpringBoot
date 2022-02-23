@@ -93,7 +93,7 @@ public class CarroController {
 		
 		if(cli.isPrimeira()) {
 			double valor = buscaCarroId.get().getValor();
-			double valorFinal = valor * (1 -(1 / 100));
+			double valorFinal = valor * 0.99;
 			buscaCarroId.get().setValor(valorFinal);
 		}
 		
