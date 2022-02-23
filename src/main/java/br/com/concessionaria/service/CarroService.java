@@ -16,6 +16,11 @@ public class CarroService {
 	private CarroRepository carroRepository;
 	
 	public Carro createCarro(Carro carro) {
+		carro.setDisponivel(true);
+		return carroRepository.save(carro);
+	}
+	
+	public Carro salvaCarro(Carro carro) {
 		return carroRepository.save(carro);
 	}
 	

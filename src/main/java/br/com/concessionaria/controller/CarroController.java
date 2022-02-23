@@ -18,14 +18,16 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.concessionaria.dto.ClienteDTO;
+import br.com.concessionaria.dto.VendaDTO;
 import br.com.concessionaria.model.Carro;
 import br.com.concessionaria.model.Cliente;
 import br.com.concessionaria.repository.CarroRepository;
 import br.com.concessionaria.repository.ClienteRepository;
 import br.com.concessionaria.service.CarroService;
+import br.com.concessionaria.service.ClienteService;
 
 @RestController
-@RequestMapping("/carro")
+@RequestMapping("api/carro")
 public class CarroController {
 	
 	@Autowired
@@ -36,6 +38,9 @@ public class CarroController {
 	
 	@Autowired
 	private ClienteRepository clienteRepository;
+	
+	@Autowired
+	private ClienteService clienteService;
 	
 	@GetMapping
 	public ResponseEntity<List<Carro>> listaCarros() {
@@ -57,13 +62,13 @@ public class CarroController {
 		return ResponseEntity.created(uri).build();
 	}
 	
-	@DeleteMapping("excluir/{id}")
+	@DeleteMapping("/excluir/{id}")
 	public ResponseEntity<?> deleteCarroById(@PathVariable Long id) {
 		carroService.delete(id);
 		return ResponseEntity.noContent().build();
 	}
 	
-	@PutMapping("update/{id}")
+	@PutMapping("/update/{id}")
 	public ResponseEntity<?> updateCarro(@RequestBody Carro carro, @PathVariable Long id) {
 		Carro carroUpdate = carro;
 		carroUpdate.setId(id);
@@ -72,14 +77,38 @@ public class CarroController {
 		return ResponseEntity.noContent().build();
 	}
 	
-	@PostMapping("venda/{id}")
-	public ResponseEntity<?> vendaCarro(@PathVariable("id") long id, @RequestBody ClienteDTO clienteDTO){
+	@PostMapping("/venda/{id}")
+	public ResponseEntity<?> vendaCarro(@PathVariable("id") long id, @RequestBody ClienteDTO clienteDTO) {
 		Optional<Carro> buscaCarroId = carroRepository.findById(id);
 		
+		if(!buscaCarroId.get().isDisponivel()){
+			return ResponseEntity.notFound().build();
+		}
+		
 		Cliente cli = clienteRepository.findByCpf(clienteDTO.getCpf());
+		
 		if(cli == null) {
 			return ResponseEntity.notFound().build();
 		}
-		return ResponseEntity.ok().body(cli);
+		
+		if(cli.isPrimeira()) {
+			double valor = buscaCarroId.get().getValor();
+			double valorFinal = valor * (1 -(1 / 100));
+			buscaCarroId.get().setValor(valorFinal);
+		}
+		
+		buscaCarroId.get().setDisponivel(false);
+		carroService.salvaCarro(buscaCarroId.get());
+		
+		cli.setPrimeira(false);
+		clienteService.salvaCliente(cli);
+		
+		return ResponseEntity.ok().body(buscaCarroId.get());
+	}
+	
+	@GetMapping("/totalvendas")
+	public ResponseEntity<?> totalVendas(){
+		VendaDTO totalVendas = new VendaDTO(carroRepository.valor());
+		return ResponseEntity.ok().body(totalVendas);
 	}
 }

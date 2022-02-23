@@ -23,7 +23,7 @@ import br.com.concessionaria.repository.ClienteRepository;
 import br.com.concessionaria.service.ClienteService;
 
 @RestController
-@RequestMapping("/cliente")
+@RequestMapping("api/cliente")
 public class ClienteController {
 	
 	@Autowired
@@ -52,13 +52,13 @@ public class ClienteController {
 		return ResponseEntity.created(uri).build();
 	}
 	
-	@DeleteMapping("excluir/{id}")
+	@DeleteMapping("/excluir/{id}")
 	public ResponseEntity<?> deleteClienteById(@PathVariable Long id) {
 		clienteService.delete(id);
 		return ResponseEntity.noContent().build();
 	}
 	
-	@PutMapping("update/{id}")
+	@PutMapping("/update/{id}")
 	public ResponseEntity<?> updateCliente(@RequestBody Cliente cliente, @PathVariable Long id) {
 		Cliente clienteUpdate = cliente;
 		clienteUpdate.setId(id);

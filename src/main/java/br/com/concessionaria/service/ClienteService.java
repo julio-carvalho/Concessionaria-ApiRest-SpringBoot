@@ -17,6 +17,11 @@ public class ClienteService {
 	private ClienteRepository clienteRepository;
 	
 	public Cliente createCliente(Cliente cliente) {
+		cliente.setPrimeira(true);
+		return clienteRepository.save(cliente);
+	}
+	
+	public Cliente salvaCliente(Cliente cliente) {
 		return clienteRepository.save(cliente);
 	}
 	
