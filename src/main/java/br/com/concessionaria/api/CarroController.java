@@ -1,4 +1,4 @@
-package br.com.concessionaria.controller;
+package br.com.concessionaria.api;
 
 import java.net.URI;
 import java.util.ArrayList;
