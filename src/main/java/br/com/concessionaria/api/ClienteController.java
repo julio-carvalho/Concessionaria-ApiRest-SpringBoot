@@ -41,7 +41,7 @@ public class ClienteController {
 	}
 		
 	@GetMapping("/{id}")
-	public ResponseEntity<Optional<Cliente>> getCarroById(@PathVariable Long id) {
+	public ResponseEntity<Optional<Cliente>> getClienteById(@PathVariable Long id) {
 		Optional<Cliente> cliente = clienteService.findById(id);
 		return ResponseEntity.ok().body(cliente);
 	}

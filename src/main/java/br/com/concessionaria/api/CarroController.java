@@ -78,7 +78,7 @@ public class CarroController {
 	}
 	
 	@PostMapping("/venda/{id}")
-	public ResponseEntity<?> vendaCarro(@PathVariable("id") long id, @RequestBody ClienteDTO clienteDTO) {
+	public ResponseEntity<?> vendaCarro(@PathVariable Long id, @RequestBody ClienteDTO clienteDTO) {
 		Optional<Carro> buscaCarroId = carroRepository.findById(id);
 		
 		if(!buscaCarroId.get().isDisponivel()){
